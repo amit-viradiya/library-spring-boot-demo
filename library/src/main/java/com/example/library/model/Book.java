@@ -48,6 +48,6 @@ public class Book {
      * Price of the book.
      * Must be a positive value, validated using @Min.
      */
-    @Min(value = 1, message = "Price must be non-negative")
+    @Min(value = 0, message = "Price must be non-negative")
     private double price;
 }
