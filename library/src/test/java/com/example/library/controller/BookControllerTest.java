@@ -7,7 +7,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -29,15 +33,17 @@ class BookControllerTest {
 
         // When
         when(bookService.addBook(any())).thenReturn(book);
-        Book addedBook = bookController.addBook(book);
+        ResponseEntity<Book> response = bookController.addBook(book);
 
         // Then
         verify(bookService, times(1)).addBook(any());
-        assertNotNull(addedBook);
-        assertEquals(book.getId(), addedBook.getId());
-        assertEquals(book.getAuthor(), addedBook.getAuthor());
-        assertEquals(book.getPrice(), addedBook.getPrice());
-        assertEquals(book.getTitle(), addedBook.getTitle());
+        assertNotNull(response);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(book.getId(), response.getBody().getId());
+        assertEquals(book.getAuthor(), response.getBody().getAuthor());
+        assertEquals(book.getPrice(), response.getBody().getPrice());
+        assertEquals(book.getTitle(), response.getBody().getTitle());
     }
 
     // Test for GET /books (Get All Books)
@@ -48,11 +54,13 @@ class BookControllerTest {
         when(bookService.getAllBooks()).thenReturn(List.of(book));
 
         // When
-        List<Book> books = bookController.getAllBooks();
+        ResponseEntity<List<Book>> response = bookController.getAllBooks();
 
         // Then
-        assertNotNull(books);
-        assertTrue(books.contains(book));
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().contains(book));
         verify(bookService, times(1)).getAllBooks();
     }
 
@@ -64,14 +72,16 @@ class BookControllerTest {
         when(bookService.getBookById(1L)).thenReturn(book);
 
         // When
-        Book returnedBook = bookController.getBookById(1L);
+        ResponseEntity<Book> response = bookController.getBookById(1L);
 
         // Then
-        assertNotNull(returnedBook);
-        assertEquals(book.getId(), returnedBook.getId());
-        assertEquals(book.getAuthor(), returnedBook.getAuthor());
-        assertEquals(book.getPrice(), returnedBook.getPrice());
-        assertEquals(book.getTitle(), returnedBook.getTitle());
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(book.getId(), response.getBody().getId());
+        assertEquals(book.getAuthor(), response.getBody().getAuthor());
+        assertEquals(book.getPrice(), response.getBody().getPrice());
+        assertEquals(book.getTitle(), response.getBody().getTitle());
         verify(bookService, times(1)).getBookById(1L);
     }
 
@@ -85,14 +95,16 @@ class BookControllerTest {
         when(bookService.updateBook(1L, updatedBook)).thenReturn(updatedBook);
 
         // When
-        Book returnedBook = bookController.updateBook(1L, updatedBook);
+        ResponseEntity<Book> response = bookController.updateBook(1L, updatedBook);
 
         // Then
-        assertNotNull(returnedBook);
-        assertEquals(updatedBook.getId(), returnedBook.getId());
-        assertEquals(updatedBook.getAuthor(), returnedBook.getAuthor());
-        assertEquals(updatedBook.getPrice(), returnedBook.getPrice());
-        assertEquals(updatedBook.getTitle(), returnedBook.getTitle());
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(updatedBook.getId(), response.getBody().getId());
+        assertEquals(updatedBook.getAuthor(), response.getBody().getAuthor());
+        assertEquals(updatedBook.getPrice(), response.getBody().getPrice());
+        assertEquals(updatedBook.getTitle(), response.getBody().getTitle());
         verify(bookService, times(1)).updateBook(1L, updatedBook);
     }
 
@@ -104,9 +116,11 @@ class BookControllerTest {
         doNothing().when(bookService).deleteBook(bookId);
 
         // When
-        bookController.deleteBook(bookId);
+        ResponseEntity<Void> response = bookController.deleteBook(bookId);
 
         // Then
         verify(bookService, times(1)).deleteBook(bookId);
+        assertNotNull(response);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 }
