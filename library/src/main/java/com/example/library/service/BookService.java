@@ -2,47 +2,26 @@ package com.example.library.service;
 
 import com.example.library.exception.BookNotFoundException;
 import com.example.library.model.Book;
-import com.example.library.repository.BookRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
- * Service class for managing books.
+ * Interface for book service operations.
  */
-@Service
-@Slf4j
-public class BookService {
-
-    private final BookRepository bookRepository;
-
-    /**
-     * Constructor for BookService.
-     * @param bookRepository The repository for book data.
-     */
-    public BookService(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
-    }
+public interface BookService {
 
     /**
      * Adds a new book to the repository.
      * @param book The book to be added.
      * @return The saved book entity.
      */
-    public Book addBook(Book book) {
-        log.debug("Saving new book: {}", book);
-        return bookRepository.save(book);
-    }
+    Book addBook(Book book);
 
     /**
      * Retrieves all books from the repository.
      * @return A list of all books.
      */
-    public List<Book> getAllBooks() {
-        log.debug("Fetching all books");
-        return bookRepository.findAll();
-    }
+    List<Book> getAllBooks();
 
     /**
      * Retrieves a book by its ID.
@@ -50,14 +29,7 @@ public class BookService {
      * @return The book entity if found.
      * @throws BookNotFoundException If the book is not found.
      */
-    public Book getBookById(Long id) {
-        log.debug("Fetching book by id: {}", id);
-        return bookRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.error("Book not found with id: {}", id);
-                    return new BookNotFoundException("Book not found with id: " + id);
-                });
-    }
+    Book getBookById(Long id) throws BookNotFoundException;
 
     /**
      * Updates an existing book with new data.
@@ -66,32 +38,12 @@ public class BookService {
      * @return The updated book entity.
      * @throws BookNotFoundException If the book is not found.
      */
-    public Book updateBook(Long id, Book updatedBook) {
-        log.debug("Updating book with id: {}", id);
-        Book existingBook = bookRepository.findById(id)
-                .orElseThrow(() -> {
-                    log.error("Book not found with id: {}", id);
-                    return new BookNotFoundException("Book not found with id: " + id);
-                });
-
-        // Update book fields
-        existingBook.setTitle(updatedBook.getTitle());
-        existingBook.setAuthor(updatedBook.getAuthor());
-        existingBook.setPrice(updatedBook.getPrice());
-        return bookRepository.save(existingBook);
-    }
+    Book updateBook(Long id, Book updatedBook) throws BookNotFoundException;
 
     /**
      * Deletes a book by its ID.
      * @param id The ID of the book to delete.
      * @throws BookNotFoundException If the book is not found.
      */
-    public void deleteBook(Long id) {
-        log.debug("Deleting book with id: {}", id);
-        if (!bookRepository.existsById(id)) {
-            log.error("Book not found with id: {}", id);
-            throw new BookNotFoundException("Book not found with id: " + id);
-        }
-        bookRepository.deleteById(id);
-    }
+    void deleteBook(Long id) throws BookNotFoundException;
 }
