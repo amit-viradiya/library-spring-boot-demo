@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: library-deployment
+  name: library
   labels:
     app: library
 spec:
@@ -27,7 +27,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: library-service
+  name: library
 spec:
   selector:
     app: library
